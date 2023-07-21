@@ -26,5 +26,36 @@ We can then evaluate the model on the best checkpoint:
 trainer.test(model=lightning_model, datamodule=dm, ckpt_path="best")
 ```
 
+### Learning Rates and Learning Rate Checkers
+
+High learning rate:
+- Might bounce around and not find local minimum for loss wrt a weight parameter
+Low learning rate:
+- Might take too many steps to find the minimum
+
+Often we determine a rate that is too large and then change it incrementally until it is too small and pick one in the middle. 
+
+This can be expensive and time consuming. 
+
+#### Learning Rates and Learning Rate Schedulers
+
+Lightning offers an automatic learning rate finder that can be used in the L.Trainer instantiation. This moves the learning rate in steps that are small enough to make sure we don't blow up the loss. 
+
+```py
+trainer = L.Trainer(
+    auto_lr_find=True,
+    ...
+)
+
+results = trainer.tune(model=lightning_model, datamodule=dm)
+```
+
+We can also visualize the learning rate it found:
+
+```py
+fig = results["lr_find"].plot(suggest=True)
+```
+
+
 
 
